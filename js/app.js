@@ -1,3 +1,12 @@
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
+
 var plan = [
     '##########################',
     '#          #   #   o     #',
@@ -35,9 +44,23 @@ var world = new World(plan, {
     '#': Wall,
     'o': BouncingCritter
 });
-console.log(world.toString());
 
-for(var i = 0; i < 5; i++) {
-    world.turn();
-    console.log(world.toString());
-}
+
+// for(var i = 0; i < 5; i++) {
+//     world.turn();
+//     console.log(world.toString());
+// }
+
+var canvas = document.getElementById('canvas');
+
+var time;
+(function animloop(){
+    requestAnimFrame(animloop);
+    var now = new Date().getTime();
+    var dt = now - (time || now);
+    time = now;
+    if(world.update(dt)) {
+        world.turn();
+        canvas.innerHTML = world.toString().replace(/\n/g, '<br />');
+    }
+})();

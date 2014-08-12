@@ -3,6 +3,8 @@ function World(map, legend) {
     var grid = new Grid(map[0].length, map.length);
     this.grid = grid;
     this.legend = legend;
+    this.delta = 0;
+    this.frameThreshold = 300;
 
     map.forEach(function(line, y) {
         for(var x = 0; x < line.length; x++) {
@@ -50,8 +52,6 @@ World.prototype.letAct = function(critter, vector) {
 };
 
 World.prototype.checkDestination = function(action, vector) {
-    console.log(directions);
-    
     if(directions.hasOwnProperty(action.direction)) {
         var dest = vector.plus(directions[action.direction]);
         if(this.grid.isInside(dest)) {
@@ -59,3 +59,20 @@ World.prototype.checkDestination = function(action, vector) {
         }
     }
 };
+
+World.prototype.update = function(delta) {
+    this.delta += delta;
+    if(this.delta > this.frameThreshold) {
+        // this.draw(canvas);
+        this.delta = 0;
+        return true;
+    }
+
+    return false;
+};
+
+// World.prototype.draw = function(canvas) {
+//     console.log('drawing');
+//     console.log(this.toString())
+//     canvas.innerHTML = this.toString();
+// };
